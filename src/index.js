@@ -25,14 +25,56 @@ client.on('interactionCreate', async interaction => {
     if (!interaction.isChatInputCommand()) return;
 
     if (interaction.commandName === 'ping') {
-        await interaction.reply('Pong!');
+        const city = interaction.options.get('city').value;
+        const day = interaction.options.get('day').value;
+        await interaction.reply(`Pong ${city} on ${day}!`);
     }
 });
 
 async function main() {
     const commands = [{
         name: 'ping',
-        description: 'Replies with Pong!'
+        description: 'Pings a city on a specific day!',
+        options: [{
+            name: 'city',
+            type: 3,
+            description: 'Choose a city',
+            required: true,
+            choices: [
+                {
+                    name: 'Paris',
+                    value: 'Paris'
+                },
+                {
+                    name: 'Rome',
+                    value: 'Rome'
+                },
+                {
+                    name: 'London',
+                    value: 'London'
+                }
+            ]
+        },
+        {   
+            name: 'day',
+            type: 3,
+            description: 'Choose a day',
+            required: true,
+            choices: [
+                {
+                    name: 'Monday',
+                    value: 'Monday'
+                },
+                {
+                    name: 'Tuesday',
+                    value: 'Tuesday'
+                },
+                {
+                    name: 'Wednesday',
+                    value: 'Wednesday'
+                }
+            ]
+        }]
     }];
 
 
