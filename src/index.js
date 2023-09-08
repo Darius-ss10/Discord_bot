@@ -5,6 +5,7 @@ import pingCommand from './commands/ping.js';
 import rolesCommand from './commands/roles.js';
 import usersCommand from './commands/user.js';
 import channelsCommand from './commands/channel.js';    
+import banCommand from './commands/ban.js';
 
 config();
 
@@ -43,12 +44,22 @@ client.on('interactionCreate', async interaction => {
         // tag the channel
         const channel = interaction.options.getChannel('channel');
         await interaction.reply(`Channel: ${channel}`);
+    } else if (interaction.commandName === 'ban') {
+        // ban the user
+        const user = interaction.options.getUser('target');
+        await interaction.reply(`User: ${user}`);
     }
 });
 
 async function main() {
 
-    const commands = [pingCommand, rolesCommand, usersCommand, channelsCommand];
+    const commands = [
+        pingCommand, 
+        rolesCommand, 
+        usersCommand, 
+        channelsCommand, 
+        banCommand
+    ];
 
 
     try {
