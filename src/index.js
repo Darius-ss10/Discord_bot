@@ -1,5 +1,5 @@
 import { config } from 'dotenv';
-import { Client, GatewayIntentBits, ModalBuilder, Routes, SelectMenuBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder, InteractionType } from 'discord.js';
+import { Client, GatewayIntentBits, ModalBuilder, Routes, SelectMenuBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder, InteractionType, ButtonBuilder, ButtonStyle } from 'discord.js';
 import { REST } from '@discordjs/rest';
 import pingCommand from './commands/ping.js';
 import rolesCommand from './commands/roles.js';
@@ -7,6 +7,7 @@ import usersCommand from './commands/user.js';
 import channelsCommand from './commands/channel.js';    
 import banCommand from './commands/ban.js';
 import registerCommand from './commands/register.js';
+import buttonCommand from './commands/button.js';
 
 config();
 
@@ -25,6 +26,28 @@ const rest = new REST({ version: '10' }).setToken(TOKEN);
 
 client.on('ready', () => {
   console.info(`Logged in as ${client.user.tag}!`);
+});
+
+client.on('messageCreate', async message => {
+    if (message.author.bot) return;
+
+    await message.channel.send({ content: 'Hello, world!', components: [
+        new ActionRowBuilder().setComponents(
+            new ButtonBuilder()
+                .setCustomId('button1')
+                .setLabel('Click me!')
+                .setStyle(ButtonStyle.Primary),
+            new ButtonBuilder()
+                .setCustomId('button2')
+                .setLabel('Click me too!')
+                .setStyle(ButtonStyle.Primary),
+            new ButtonBuilder()
+                .setLabel('Click me three!')
+                .setStyle(ButtonStyle.Link)
+                .setURL('https://www.google.com')
+                
+        )
+    ]})
 });
 
 client.on('interactionCreate', async interaction => {
@@ -114,6 +137,26 @@ client.on('interactionCreate', async interaction => {
                 );
 
             interaction.showModal(modal);
+        } else if (interaction.commandName === 'button') {
+            interaction.reply({ 
+                content: 'Click the button!', components: [
+                    new ActionRowBuilder().setComponents(
+                        new ButtonBuilder()
+                            .setCustomId('button1')
+                            .setLabel('Click me!')
+                            .setStyle(ButtonStyle.Primary),
+                        new ButtonBuilder()
+                            .setCustomId('button2')
+                            .setLabel('Click me too!')
+                            .setStyle(ButtonStyle.Primary),
+                        new ButtonBuilder()
+                            .setLabel('Click me three!')
+                            .setStyle(ButtonStyle.Link)
+                            .setURL('https://www.google.com')
+                            
+                    )
+                ] 
+            });
         }
     } else if (interaction.isSelectMenu()) {
         if (interaction.customId === 'cities') {
@@ -131,6 +174,12 @@ client.on('interactionCreate', async interaction => {
             const comment = interaction.fields.getTextInputValue('comment');
             await interaction.reply(`Name: ${name}, Email: ${email}, Comment: ${comment}`);
         }
+    } else if (interaction.isButton()) {
+        if (interaction.customId === 'button1') {
+            await interaction.reply('Button 1 clicked!');
+        } else if (interaction.customId === 'button2') {
+            await interaction.reply('Button 2 clicked!');
+        }
     }
 
 });
@@ -143,7 +192,8 @@ async function main() {
         usersCommand, 
         channelsCommand, 
         banCommand,
-        registerCommand
+        registerCommand,
+        buttonCommand
     ];
 
 
