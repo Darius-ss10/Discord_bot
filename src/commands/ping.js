@@ -3,6 +3,7 @@ import { SlashCommandBuilder } from '@discordjs/builders';
 const pingCommand = new SlashCommandBuilder()
         .setName('ping')
         .setDescription('Pings a city on a specific day!')
+        /*
         .addStringOption(option =>
             option.setName('city')
                 .setDescription('Choose a city')
@@ -37,6 +38,7 @@ const pingCommand = new SlashCommandBuilder()
                     value: 'Wednesday'
                 })
             );
+            */
 
 
 export default pingCommand.toJSON();
