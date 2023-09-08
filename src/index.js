@@ -1,6 +1,10 @@
 import { config } from 'dotenv';
 import { Client, GatewayIntentBits, Routes } from 'discord.js';
 import { REST } from '@discordjs/rest';
+import pingCommand from './commands/ping.js';
+import rolesCommand from './commands/roles.js';
+import usersCommand from './commands/user.js';
+import channelsCommand from './commands/channel.js';    
 
 config();
 
@@ -28,54 +32,23 @@ client.on('interactionCreate', async interaction => {
         const city = interaction.options.get('city').value;
         const day = interaction.options.get('day').value;
         await interaction.reply(`Pong ${city} on ${day}!`);
+    } else if (interaction.commandName === 'addrole') {
+        const role = interaction.options.getRole('newrole');
+        await interaction.reply(`Role: ${role}!`);
+    } else if (interaction.commandName === 'users') {
+        // tag the user
+        const user = interaction.options.getUser('user');
+        await interaction.reply(`User: ${user}`);
+    } else if (interaction.commandName === 'channels') {
+        // tag the channel
+        const channel = interaction.options.getChannel('channel');
+        await interaction.reply(`Channel: ${channel}`);
     }
 });
 
 async function main() {
-    const commands = [{
-        name: 'ping',
-        description: 'Pings a city on a specific day!',
-        options: [{
-            name: 'city',
-            type: 3,
-            description: 'Choose a city',
-            required: true,
-            choices: [
-                {
-                    name: 'Paris',
-                    value: 'Paris'
-                },
-                {
-                    name: 'Rome',
-                    value: 'Rome'
-                },
-                {
-                    name: 'London',
-                    value: 'London'
-                }
-            ]
-        },
-        {   
-            name: 'day',
-            type: 3,
-            description: 'Choose a day',
-            required: true,
-            choices: [
-                {
-                    name: 'Monday',
-                    value: 'Monday'
-                },
-                {
-                    name: 'Tuesday',
-                    value: 'Tuesday'
-                },
-                {
-                    name: 'Wednesday',
-                    value: 'Wednesday'
-                }
-            ]
-        }]
-    }];
+
+    const commands = [pingCommand, rolesCommand, usersCommand, channelsCommand];
 
 
     try {
