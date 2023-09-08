@@ -1,12 +1,12 @@
 import { config } from 'dotenv';
-import { Client, GatewayIntentBits, Routes, SelectMenuBuilder } from 'discord.js';
+import { Client, GatewayIntentBits, ModalBuilder, Routes, SelectMenuBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder, InteractionType } from 'discord.js';
 import { REST } from '@discordjs/rest';
 import pingCommand from './commands/ping.js';
 import rolesCommand from './commands/roles.js';
 import usersCommand from './commands/user.js';
 import channelsCommand from './commands/channel.js';    
 import banCommand from './commands/ban.js';
-import { ActionRowBuilder, StringSelectMenuBuilder } from '@discordjs/builders';
+import registerCommand from './commands/register.js';
 
 config();
 
@@ -88,6 +88,32 @@ client.on('interactionCreate', async interaction => {
             // ban the user
             const user = interaction.options.getUser('target');
             await interaction.reply(`User: ${user}`);
+        } else if (interaction.commandName === 'register') {
+            const modal = new ModalBuilder()
+                .setTitle('Register')
+                .setCustomId('register')
+                .setComponents(
+                    new ActionRowBuilder().setComponents(
+                        new TextInputBuilder()
+                            .setLabel('name')
+                            .setCustomId('name')
+                            .setStyle(TextInputStyle.Short)
+                    ),
+                    new ActionRowBuilder().setComponents(
+                        new TextInputBuilder()
+                            .setLabel('email')
+                            .setCustomId('email')
+                            .setStyle(TextInputStyle.Short)
+                    ),
+                    new ActionRowBuilder().setComponents(
+                        new TextInputBuilder()
+                            .setLabel('comment')
+                            .setCustomId('comment')
+                            .setStyle(TextInputStyle.Paragraph)
+                    )
+                );
+
+            interaction.showModal(modal);
         }
     } else if (interaction.isSelectMenu()) {
         if (interaction.customId === 'cities') {
@@ -98,6 +124,13 @@ client.on('interactionCreate', async interaction => {
             await interaction.reply(`Day: ${day}`);
         }
         
+    } else if (interaction.type === InteractionType.ModalSubmit) {
+        if (interaction.customId === 'register') {
+            const name = interaction.fields.getTextInputValue('name');
+            const email = interaction.fields.getTextInputValue('email');
+            const comment = interaction.fields.getTextInputValue('comment');
+            await interaction.reply(`Name: ${name}, Email: ${email}, Comment: ${comment}`);
+        }
     }
 
 });
@@ -109,7 +142,8 @@ async function main() {
         rolesCommand, 
         usersCommand, 
         channelsCommand, 
-        banCommand
+        banCommand,
+        registerCommand
     ];
 
 
